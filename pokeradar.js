@@ -9,6 +9,7 @@ var square_distance = 0.0000449 * 50;
 var has_error = false;
 // var trainer_sprite = "http://img3.wikia.nocookie.net/__cb20140219220430/fantendo/images/0/0b/Pokemon_trainer_red_sprite_by_jamesrayle-d49b1km.png";
 var trainer_sprite = "./pokemaniac.png";
+var quadrants_loaded = 0;
 
 
 // // CHANGE PROTOCOL TO HTTPS IF NECESSARY
@@ -166,8 +167,9 @@ function build_map_step(location, quadrant) {
         for(var i = num_3_digits.length; i < 3; i++) {
           num_3_digits = "0" + num_3_digits;
         }
-        // marker_images.push("http://serebii.net/xy/pokemon/"+num_3_digits+".png");
-        marker_images.push("http://serebii.net/pokedex-xy/icon/"+num_3_digits+".png");
+        // marker_images.push("http://serebii.net/xy/pokemon/"+num_3_digits+".png");  // MEDIUM-LARGE SIZED
+        // marker_images.push("http://serebii.net/pokedex-xy/icon/"+num_3_digits+".png"); // TINY SIZED
+        marker_images.push("http://serebii.net/blackwhite/pokemon/"+num_3_digits+".png"); // MEDIUM SIZED
 
         // marker_images.push("http://serebii.net/art/th/"+v.id+".png");
 
@@ -202,7 +204,7 @@ function build_map_step(location, quadrant) {
         create_map();
 
         if(has_error) {
-          onsole.log('Error while attempting to retrieve poke locations');
+          console.log('Error while attempting to retrieve poke locations');
           // alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
           alert("One or more quandrant searches failed.");
         }
