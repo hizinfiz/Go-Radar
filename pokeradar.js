@@ -6,6 +6,7 @@ var infoWindowContent = [];
 var marker_images = [];
 var first_load = true;
 var square_distance = 0.0000449 * 50;
+var has_error = false;
 
 // // CHANGE PROTOCOL TO HTTPS IF NECESSARY
 // if (location.protocol !== "https:") {
@@ -117,6 +118,7 @@ function build_map_update(location) {
   markers = [];
   infoWindowContent = [];
   marker_images = [];
+  has_error = false;
 
   // ADD CHARACTER DATA TO MAP
   marker_obj = ["Ashe", location.coords.latitude,location.coords.longitude];
@@ -162,7 +164,17 @@ function build_map_step(location, quadrant) {
         markers.push(marker_obj);
         infoWindowContent_obj = ['<div class="info_content">' + '<h3>'+v.name+'</h3>' + '<p>will be there for another '+v.time_left+' seconds.</p>' +  '<p> Exact location at ' + v.latitude.toString() + ', ' + v.longitude.toString() + '. Zoom in for a more accurate location.' +      '</div>'];
         infoWindowContent.push(infoWindowContent_obj);
-        marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/"+v.id+".ico");
+        // marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/"+v.id+".ico");
+
+        var num_3_digits = v.id.toString();
+        for(var i = num_3_digits.length; i < 3; i++) {
+          num_3_digits = "0" + num_3_digits;
+        }
+        // marker_images.push("http://serebii.net/xy/pokemon/"+num_3_digits+".png");
+        marker_images.push("http://serebii.net/pokedex-xy/icon/"+num_3_digits+".png");
+
+        // marker_images.push("http://serebii.net/art/th/"+v.id+".png");
+
       });
 
       // RECURSE ELSE UPDATE MAP
@@ -180,8 +192,9 @@ function build_map_step(location, quadrant) {
       }
     },
     error: function() {
-      console.log('Error while attempting to retrieve poke locations');
-      alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
+      has_error = true;
+      // console.log('Error while attempting to retrieve poke locations');
+      // alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
 
 
       // RECURSE ELSE UPDATE MAP
@@ -191,6 +204,12 @@ function build_map_step(location, quadrant) {
       } else {
         $('#map_canvas').html('');
         create_map();
+
+        if(has_error) {
+          onsole.log('Error while attempting to retrieve poke locations');
+          // alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
+          alert("One or more quandrant searches failed.");
+        }
 
         // RECURSE EVERY MINUTE
         setTimeout(function(){
