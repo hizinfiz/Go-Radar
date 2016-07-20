@@ -10,6 +10,7 @@ var has_error = false;
 // var trainer_sprite = "http://img3.wikia.nocookie.net/__cb20140219220430/fantendo/images/0/0b/Pokemon_trainer_red_sprite_by_jamesrayle-d49b1km.png";
 var trainer_sprite = "./pokemaniac.png";
 var quadrants_loaded = 0;
+var quad_data = [];
 
 
 // // CHANGE PROTOCOL TO HTTPS IF NECESSARY
@@ -33,7 +34,7 @@ function map_api_loaded() {
 function build_initial_map(location) {
   //Your position
   $('#map_canvas').html('');
-  marker_obj = ["Ashe", location.coords.latitude,location.coords.longitude];
+  marker_obj = ["You", location.coords.latitude,location.coords.longitude];
   markers.push(marker_obj);
   infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
   infoWindowContent.push(infoWindowContent_obj);
@@ -123,19 +124,24 @@ function build_map_update(location) {
   infoWindowContent = [];
   marker_images = [];
   has_error = false;
+  quadrants_loaded = 0;
+  quad_data = [];
 
   // ADD CHARACTER DATA TO MAP
-  marker_obj = ["Ashe", location.coords.latitude,location.coords.longitude];
+  marker_obj = [["You", location.coords.latitude,location.coords.longitude]];
   markers.push(marker_obj);
   infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
   infoWindowContent.push(infoWindowContent_obj);
   marker_images.push(trainer_sprite);
 
-  // CALL RECURSIVE STEPS
-  build_map_step(location, 0);
+  // RUN AJAX CALLS IN PARALLEL, CALL EVERY 300 MILLISECONDS
+  console.log("Starting API Calls");
+  for(var quad = 0; quad < 25; quad++) {
+    build_map_step_parallel(location, quad); // Unfortunately, server returns 500 errors too often for this method
+  }
 }
 
-function build_map_step(location, quadrant) {
+function build_map_step_parallel(location, quadrant) {
   // GET QUADRANT COORDS
   var row = Math.floor(quadrant / 5) - 2;
   var col = Math.floor(quadrant % 5) - 2;
@@ -154,70 +160,73 @@ function build_map_step(location, quadrant) {
     dataType: 'json',
     success: function (data) {
 
+      // console.log("Quadrant Successful: "+quadrant);
+
+      var quad_markers = [];
+      var quad_infos = [];
+      var quad_images = [];
+
       // ADD EACH POKEMON'S LOCATION DATA TO THE MARKER VARIABLES
       $.each(data.data, function(k, v) {
-        marker_obj = [v.name, v.latitude,v.longitude];
+        var marker_obj = [v.name, v.latitude,v.longitude];
         // console.log([v.latitude, v.longitude]);
-        markers.push(marker_obj);
-        infoWindowContent_obj = ['<div class="info_content">' + '<h3>'+v.name+'</h3>' + '<p>will be there for another '+v.time_left+' seconds.</p>' +  '<p> Exact location at ' + v.latitude.toString() + ', ' + v.longitude.toString() + '. Zoom in for a more accurate location.' +      '</div>'];
-        infoWindowContent.push(infoWindowContent_obj);
-        // marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/"+v.id+".ico");
+        quad_markers.push(marker_obj);
+        var infoWindowContent_obj = ['<div class="info_content">' + '<h3>'+v.name+'</h3>' + '<p>will be there for another '+v.time_left+' seconds.</p>' +  '<p> Exact location at ' + v.latitude.toString() + ', ' + v.longitude.toString() + '. Zoom in for a more accurate location.' +      '</div>'];
+        quad_infos.push(infoWindowContent_obj);
 
         var num_3_digits = v.id.toString();
         for(var i = num_3_digits.length; i < 3; i++) {
           num_3_digits = "0" + num_3_digits;
         }
-        // marker_images.push("http://serebii.net/xy/pokemon/"+num_3_digits+".png");  // MEDIUM-LARGE SIZED
-        // marker_images.push("http://serebii.net/pokedex-xy/icon/"+num_3_digits+".png"); // TINY SIZED
-        marker_images.push("http://serebii.net/blackwhite/pokemon/"+num_3_digits+".png"); // MEDIUM SIZED
-
-        // marker_images.push("http://serebii.net/art/th/"+v.id+".png");
+        quad_images.push("http://serebii.net/blackwhite/pokemon/"+num_3_digits+".png");
 
       });
 
-      // RECURSE ELSE UPDATE MAP
-      console.log("Done Quadrant " + quadrant.toString());
-      if (quadrant < 24) {
-        build_map_step(location, quadrant + 1);
-      } else {
-        $('#map_canvas').html('');
-        create_map();
+      // INCREMENT COUNTER AND ADD TO BUFFER
+      quad_data.push({
+        markers: quad_markers,
+        infos: quad_infos,
+        marker_images: quad_images
+      });
+      quadrants_loaded += 1;
+      if(quadrants_loaded == 24) last_quad_loaded();
 
-        // RECURSE EVERY MINUTE
-        setTimeout(function(){
-          navigator.geolocation.getCurrentPosition(handler);
-        }, 60000);
-      }
     },
     error: function() {
+      // console.log("Quadrant FAILED: "+quadrant);
+
       has_error = true;
-      // console.log('Error while attempting to retrieve poke locations');
-      // alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
 
-
-      // RECURSE ELSE UPDATE MAP
-      console.log("Done Quadrant " + quadrant.toString());
-      if (quadrant < 24) {
-        build_map_step(location, quadrant + 1);
-      } else {
-        $('#map_canvas').html('');
-        create_map();
-
-        if(has_error) {
-          console.log('Error while attempting to retrieve poke locations');
-          // alert("An error occured. Please reload the page and try again! If you've already reloaded, please go to the homepage and check the Server Status.");
-          alert("One or more quandrant searches failed.");
-        }
-
-        // RECURSE EVERY MINUTE
-        setTimeout(function(){
-          navigator.geolocation.getCurrentPosition(handler);
-        }, 60000);
-      }
+      // INCREMENT AND CHECK
+      quadrants_loaded += 1;
+      if(quadrants_loaded == 24) last_quad_loaded();
     }
   });
-
-
 }
+
+function last_quad_loaded() {
+  console.log("API Calls Done");
+
+  // FLATTEN MAP MARKER DATA
+  for(var i = 0; i < quad_data.length; i++) {
+    markers.push(quad_data[i].markers);
+    infoWindowContent.push(quad_data[i].infos);
+    marker_images.push(quad_data[i].marker_images);
+  }
+
+  markers = [].concat.apply([], markers);
+  infoWindowContent = [].concat.apply([], infoWindowContent);
+  marker_images = [].concat.apply([], marker_images);
+
+  // BUILD MAP
+  $('#map_canvas').html('');
+  create_map();
+
+  // RECURSE
+  setTimeout(function(){
+    navigator.geolocation.getCurrentPosition(handler);
+  }, 30000);
+}
+
 
 window.onload = show_popup;
