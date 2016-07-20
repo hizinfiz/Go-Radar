@@ -5,7 +5,7 @@ var markers = [];
 var infoWindowContent = [];
 var marker_images = [];
 var first_load = true;
-var square_distance = 0.0000449 * 75;
+var square_distance = 0.0000449 * 50;
 
 // // CHANGE PROTOCOL TO HTTPS IF NECESSARY
 // if (location.protocol !== "https:") {
@@ -118,12 +118,12 @@ function build_map_update(location) {
   infoWindowContent = [];
   marker_images = [];
 
-  // // ADD CHARACTER DATA TO MAP
-  // marker_obj = ["Ashe", location.coords.latitude,location.coords.longitude];
-  // markers.push(marker_obj);
-  // infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
-  // infoWindowContent.push(infoWindowContent_obj);
-  // marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
+  // ADD CHARACTER DATA TO MAP
+  marker_obj = ["Ashe", location.coords.latitude,location.coords.longitude];
+  markers.push(marker_obj);
+  infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
+  infoWindowContent.push(infoWindowContent_obj);
+  marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
 
   // CALL RECURSIVE STEPS
   build_map_step(location, 0);
@@ -148,12 +148,12 @@ function build_map_step(location, quadrant) {
     dataType: 'json',
     success: function (data) {
 
-      // ADD CHARACTER DATA TO MAP
-      marker_obj = ["Ashe", currPosition.latitude,currPosition.longitude];
-      markers.push(marker_obj);
-      infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
-      infoWindowContent.push(infoWindowContent_obj);
-      marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
+      // // ADD CHARACTER DATA TO MAP
+      // marker_obj = ["Ashe", currPosition.latitude,currPosition.longitude];
+      // markers.push(marker_obj);
+      // infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
+      // infoWindowContent.push(infoWindowContent_obj);
+      // marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
 
       // ADD EACH POKEMON'S LOCATION DATA TO THE MARKER VARIABLES
       $.each(data.data, function(k, v) {
