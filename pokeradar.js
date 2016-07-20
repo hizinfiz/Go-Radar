@@ -7,6 +7,9 @@ var marker_images = [];
 var first_load = true;
 var square_distance = 0.0000449 * 50;
 var has_error = false;
+// var trainer_sprite = "http://img3.wikia.nocookie.net/__cb20140219220430/fantendo/images/0/0b/Pokemon_trainer_red_sprite_by_jamesrayle-d49b1km.png";
+var trainer_sprite = "./pokemaniac.png";
+
 
 // // CHANGE PROTOCOL TO HTTPS IF NECESSARY
 // if (location.protocol !== "https:") {
@@ -33,7 +36,7 @@ function build_initial_map(location) {
   markers.push(marker_obj);
   infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
   infoWindowContent.push(infoWindowContent_obj);
-  marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
+  marker_images.push(trainer_sprite);
   create_map();
   first_load = false;
   build_map_update(location);
@@ -125,7 +128,7 @@ function build_map_update(location) {
   markers.push(marker_obj);
   infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
   infoWindowContent.push(infoWindowContent_obj);
-  marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
+  marker_images.push(trainer_sprite);
 
   // CALL RECURSIVE STEPS
   build_map_step(location, 0);
@@ -149,13 +152,6 @@ function build_map_step(location, quadrant) {
     data: { location: currPosition.latitude.toString()+', '+currPosition.longitude.toString() },
     dataType: 'json',
     success: function (data) {
-
-      // // ADD CHARACTER DATA TO MAP
-      // marker_obj = ["Ashe", currPosition.latitude,currPosition.longitude];
-      // markers.push(marker_obj);
-      // infoWindowContent_obj = ['<div class="info_content"><h3>You</h3></div>'];
-      // infoWindowContent.push(infoWindowContent_obj);
-      // marker_images.push("https://pokeradar-map.herokuapp.com/static/poke/trainer.gif");
 
       // ADD EACH POKEMON'S LOCATION DATA TO THE MARKER VARIABLES
       $.each(data.data, function(k, v) {
