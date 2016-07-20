@@ -189,7 +189,7 @@ function build_map_step_parallel(location, quadrant) {
         marker_images: quad_images
       });
       quadrants_loaded += 1;
-      if(quadrants_loaded == 24) last_quad_loaded();
+      if(quadrants_loaded == 25) last_quad_loaded();
 
     },
     error: function() {
@@ -199,7 +199,7 @@ function build_map_step_parallel(location, quadrant) {
 
       // INCREMENT AND CHECK
       quadrants_loaded += 1;
-      if(quadrants_loaded == 24) last_quad_loaded();
+      if(quadrants_loaded == 25) last_quad_loaded();
     }
   });
 }
