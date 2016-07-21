@@ -144,15 +144,19 @@ $(function() {
 
 // Populate the Pokemon Toggle Box
 $(document).ready(function(){
-    var box = document.getElementById("box");
-    var poke = document.createElement("div");
-    poke.className = "pokemon";
+//    var box = document.getElementById("box");
+    var box = document.getElementById("selector");
+//    var poke = document.createElement("div");
+    var poke = document.createElement("label");
+//    poke.className = "pokemon";
+    poke.className = "btn btn-primary";
     for (var i = 1; i < 152; i++) {
         var num = i.toString();
         for(var j = num.length; j < 3; j++) {
         num = "0" + num;
         }
-        poke.innerHTML = "<img src='http://serebii.net/blackwhite/pokemon/"+num+".png'><input type='checkbox' name="+num+" value="+num+" onclick='updateToggle("+i+")' checked>";
+//        poke.innerHTML = "<div class='col-xs-4'><img src='http://serebii.net/blackwhite/pokemon/"+num+".png'><input style='display:inline' type='checkbox' name="+num+" value="+num+" onclick='updateToggle("+i+")' checked></div>";
+        poke.innerHTML = "<input type='checkbox' autocomplete='off'><img src='http://serebii.net/blackwhite/pokemon/"+num+".png'>";
         box.appendChild(poke.cloneNode(true));
     }
 });
@@ -168,7 +172,7 @@ function refreshMap() {
     navigator.geolocation.getCurrentPosition(handler)
 }
 
-$("#sprite").change(function() {
+$(".sprite").change(function() {
    if  (pokemon_sprite_prefix == "http://www.serebii.net/battletrozei/pokemon/") {
        pokemon_sprite_prefix = "http://www.serebii.net/blackwhite/pokemon/";
        refreshMap();

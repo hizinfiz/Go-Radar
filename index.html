@@ -6,6 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     </head>
     <style>
         html { height: 100% }
@@ -24,62 +25,58 @@
         }
         #pokeSelect {
             position: absolute;
-            left: -742px;
-            bottom: 0.0;
+/*            left: -742px;*/
+            bottom: 0;
+            margin-bottom: -20px;
+            overflow: hidden;
         }
         #box {
-            background: white;
-            border: solid #aaa;
-            border-width: 2px 2px 0 0;
-            width: 742px;
-            height: 420px;
-            float: left;
+/*            background: white;*/
+/*            border: solid #aaa;*/
+/*            border-width: 2px 2px 0 0;*/
+            height: 500px;
+/*            float: left;*/
             overflow: scroll;
         }
-        #box p,h4 {
-            text-align: center;
-        }
-        .pokemon {
-            height: 100px;
-            width: 120px;
-            float: left;
-            display: inline
-        }
-        #buttons{
-            float: left;
-        }
-        #toggle, #rebuild{
-            background: #aaa;
-            height: 30px;
-            width: 30px;
-            align-items: center;
-            display: block;
-            text-align: center;
-        }
-        #toggle span, #rebuild span {
-            color: white;
-            line-height: 26px;
-        }
-
     </style>
     <div id="map_wrapper">
         <div id="map_canvas" class="mapping">Loading visible pokemon near you... (Please use Chrome. Safari may not work.)</div>
         <input type="button" id="backButton" onclick="location.href='http://pokeradar.xyz';" value="Go Back to Homepage" />
     </div>
 
-    <div>
-        <div id="pokeSelect">
-            <div id="box">
-                <h4>Pokemon Toggle</h4>
-                <p><strong>Check:</strong> Show Pokemon <strong>No Check:</strong> Hide Pokemon</p>
-                <p><strong>Sprites: </strong>Battle Trozei <input id="sprite" type="radio" name="sprite" value="bt" checked="checked"/> | Black & White <input id="sprite" type="radio" name="sprite" value="bw"/></p>
-            </div>
-            <div id="buttons">
-                <div id="toggle">
-                    <span class="glyphicon center glyphicon-chevron-right" aria-hidden="true"></span>
-                </div>
-                <div id="rebuild">
-                    <span class="glyphicon center glyphicon-refresh" aria-hidden="true" onclick="refreshMap()"></span>
+    <div class="container">
+        <div id="pokeSelect" class="row row-content">
+            <div class="col-12">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" href="#box">Pokemon Toggle</a>
+                            </h4>
+                        </div>
+                        <div id="box" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="well">Sprites: 
+                                    <div class="btn-group" data-toggle="buttons">
+                                        <label class="btn btn-primary active">
+                                            <input type="checkbox" autocomplete="off" checked> Battle Trozei
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="checkbox" autocomplete="off"> Black & White
+                                        </label>
+                                    </div>
+                                    <div style="padding: 10 0">
+                                    <button type="button" id="myButton" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+                                        Refresh Map
+                                    </button>
+                                    </div>
+                                    <div>Click boxes to hide pokemon</div>
+                                </div>
+                                <div id="selector" class="btn-group" data-toggle="buttons">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
