@@ -167,3 +167,13 @@ function updateToggle(num) {
 function refreshMap() {
     navigator.geolocation.getCurrentPosition(handler)
 }
+
+$("#sprite").change(function() {
+   if  (pokemon_sprite_prefix == "http://www.serebii.net/battletrozei/pokemon/") {
+       pokemon_sprite_prefix = "http://www.serebii.net/blackwhite/pokemon/";
+       refreshMap();
+   } else {
+       pokemon_sprite_prefix = "http://www.serebii.net/battletrozei/pokemon/";
+       refreshMap();
+   }
+});
