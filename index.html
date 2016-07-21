@@ -5,6 +5,7 @@
     <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
     <style>
         html { height: 100% }
@@ -21,10 +22,66 @@
             top:0.0;
             right:0.0;
         }
+        #pokeSelect {
+            position: absolute;
+            left: -742px;
+            bottom: 0.0;
+        }
+        #box {
+            background: white;
+            border: solid #aaa;
+            border-width: 2px 2px 0 0;
+            width: 742px;
+            height: 390px;
+            float: left;
+            overflow: scroll;
+        }
+        #box p,h4 {
+            text-align: center;
+        }
+        .pokemon {
+            height: 100px;
+            width: 120px;
+            float: left;
+            display: inline
+        }
+        #buttons{
+            float: left;
+        }
+        #toggle, #rebuild{
+            background: #aaa;
+            height: 30px;
+            width: 30px;
+            align-items: center;
+            display: block;
+            text-align: center;
+        }
+        #toggle span, #rebuild span {
+            color: white;
+            line-height: 26px;
+        }
+
     </style>
     <div id="map_wrapper">
         <div id="map_canvas" class="mapping">Loading visible pokemon near you... (Please use Chrome. Safari may not work.)</div>
         <input type="button" id="backButton" onclick="location.href='http://pokeradar.xyz';" value="Go Back to Homepage" />
+    </div>
+
+    <div>
+        <div id="pokeSelect">
+            <div id="box">
+                <h4>Pokemon Toggle</h4>
+                <p><strong>Check:</strong> Show Pokemon <strong>No Check:</strong> Hide Pokemon</p>
+            </div>
+            <div id="buttons">
+                <div id="toggle">
+                    <span class="glyphicon center glyphicon-chevron-right" aria-hidden="true"></span>
+                </div>
+                <div id="rebuild">
+                    <span class="glyphicon center glyphicon-refresh" aria-hidden="true" onclick="refreshMap()"></span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="./pokeradar_resources.js"></script>

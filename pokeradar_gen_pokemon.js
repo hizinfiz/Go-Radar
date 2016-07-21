@@ -8,6 +8,10 @@ var quadrants_loaded = 0;
 var markers = [];
 var infoWindowContent = [];
 var marker_images = [];
+var pokeToggle = [];
+for (var i = 0; i < 151; i++) {
+    pokeToggle.push(true);
+}
 
 // SQUARE CONSTANTS
 var SQUARE_DISTANCE = 0.0000449 * 30;
@@ -93,18 +97,19 @@ function last_quad_loaded() {
 
   // GENERATE MARKER DATA
   $.each(data_buffer, function(k, v) {
-    var marker_obj = [v.name, v.latitude,v.longitude];
-    // console.log([v.latitude, v.longitude]);
-    markers.push(marker_obj);
-    var infoWindowContent_obj = ['<div class="info_content">' + '<h3>'+v.name+'</h3>' + '<p>will be there for another '+v.time_left+' seconds.</p>' +  '<p> Exact location at ' + v.latitude.toString() + ', ' + v.longitude.toString() + '. Zoom in for a more accurate location.' +      '</div>'];
-    infoWindowContent.push(infoWindowContent_obj);
+    if (pokeToggle[v.id-1] == true) {
+      var marker_obj = [v.name, v.latitude,v.longitude];
+      // console.log([v.latitude, v.longitude]);
+      markers.push(marker_obj);
+      var infoWindowContent_obj = ['<div class="info_content">' + '<h3>'+v.name+'</h3>' + '<p>will be there for another '+v.time_left+' seconds.</p>' +  '<p> Exact location at ' + v.latitude.toString() + ', ' + v.longitude.toString() + '. Zoom in for a more accurate location.' +      '</div>'];
+      infoWindowContent.push(infoWindowContent_obj);
 
-    var num_3_digits = v.id.toString();
-    for(var i = num_3_digits.length; i < 3; i++) {
-      num_3_digits = "0" + num_3_digits;
+      var num_3_digits = v.id.toString();
+      for(var i = num_3_digits.length; i < 3; i++) {
+        num_3_digits = "0" + num_3_digits;
+      }
+      marker_images.push(pokemon_sprite_prefix+num_3_digits+".png");
     }
-    marker_images.push(pokemon_sprite_prefix+num_3_digits+".png");
-
   });
 
   console.log(data_buffer, markers);
@@ -118,4 +123,47 @@ function last_quad_loaded() {
     navigator.geolocation.getCurrentPosition(handler);
   }, 60000);
 
+}
+
+// Show/Hide the Pokemon Toggle Box
+$(function() {
+    var showing = false;
+    $("#toggle").click(function() {
+        var span = document.getElementById("toggle").firstChild.innerHTML;
+        if (showing) {
+            $(this).find("span").toggleClass("glyphicon-chevron-right").toggleClass("glyphicon-chevron-left");
+            $("#pokeSelect").animate({'left' : '-742px'}, {duration : 400});
+            showing = false;
+        } else {
+            $(this).find("span").toggleClass("glyphicon-chevron-right").toggleClass("glyphicon-chevron-left");
+            $("#pokeSelect").animate({'left' : '0'}, {duration : 400});
+            showing = true;
+        }
+    });
+});
+
+// Populate the Pokemon Toggle Box
+$(document).ready(function(){
+    var box = document.getElementById("box");
+    var poke = document.createElement("div");
+    poke.className = "pokemon";
+    for (var i = 1; i < 152; i++) {
+        var num = i.toString();
+        for(var j = num.length; j < 3; j++) {
+        num = "0" + num;
+        }
+        poke.innerHTML = "<img src='http://serebii.net/blackwhite/pokemon/"+num+".png'><input type='checkbox' name="+num+" value="+num+" onclick='updateToggle("+i+")' checked>";
+        box.appendChild(poke.cloneNode(true));
+    }
+});
+
+// Update pokeToggle array when a checkbox is clicked
+function updateToggle(num) {
+    pokeToggle[num-1] = !pokeToggle[num-1]
+    console.log(pokeToggle)
+}
+
+// Force a map rebuild
+function refreshMap() {
+    navigator.geolocation.getCurrentPosition(handler)
 }
